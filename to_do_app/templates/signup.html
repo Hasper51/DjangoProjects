@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+	<link rel="stylesheet" href="{% static 'todo/css/styles.css' %}" />
+    <style>
+    .form-title{
+        color: var(--clr-gb-1);
+    }
+    .input-form{
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-input{
+        width: 100%;
+        padding: 1rem 1rem;
+        color: var(--clr-gb-1);
+    }
+    .txt-container{
+        border: 1px solid white;
+        border-radius: 0.5rem;
+
+    }
+    .form-btn{
+        cursor: pointer;
+        border: 1px solid var(--clr-gb-5);
+        border-radius: 0.7rem;
+        padding: 1rem;
+        justify-content: center;
+        color: var(--clr-gb-1);
+        
+    }
+    .form-btn:hover{
+        background-color: var(--clr-gb-5);
+    }
+    .sign-up{
+        display: flex;
+        justify-content: center;
+    }
+    .sign-up a{
+        color: var(--clr-gb-4);
+        text-decoration: none;
+    }
+    .sign-up a:hover{
+        color: var(--clr-primary);
+    }
+    
+    </style>
+{% endblock %}
+{% block content %}
+	
+
+        <form action="{% url 'to_do_app:register' %}" method="post">
+            {% csrf_token %}
+            <div class="card add input-form">
+                <h3 class="form-title">Sign Up Form</h3>
+                <div class="txt-container">
+                    <label for="{{ form.username.id_for_label }}">Login</label>
+                    {{ form.username }}
+                </div>
+                <div class="txt-container">
+                    <label for="{{ form.password1.id_for_label }}">Password</label>
+                    {{ form.password1 }}
+                </div>
+                <div class="txt-container">
+                    <label for="{{ form.password2.id_for_label }}">Password</label>
+                    {{ form.password2 }}
+                </div>
+                <button class="form-btn" type="submit">Sign Up</button>
+                <div class="sign-up">
+                    <a href="{% url 'to_do_app:login' %}">Already have an account? Sign In</a>
+                </div>
+                
+            </div>
+        </form>
+
+
+{% endblock %}

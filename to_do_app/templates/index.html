@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'todo/css/styles.css' %}"/>
+    <script src="https://kit.fontawesome.com/0e9700bd22.js" crossorigin="anonymous"></script>
+    <style>
+        .txt-container-edit {
+            flex: 1;
+        }
+
+        .txt-input-edit {
+            width: 100%;
+            padding: 0.7rem 0;
+            color: var(--clr-gb-1);
+        }
+
+        body.light .txt-input-edit {
+            font-weight: var(--fw-bold);
+        }
+
+        .txt-input-edit::placeholder {
+            color: var(--clr-gb-5);
+            font-weight: var(--fw-normal);
+        }
+
+        .todo-edit-form {
+            width: 100%;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .todo-edit-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .invisible {
+            display: none;
+        }
+
+        .highlight {
+            border: 2px solid #4CAF50;
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+
+    <main>
+        <form method="post">
+            {% csrf_token %}
+            <div class="card add">
+                <div class="cb-container">
+                    <button id="add-btn" type="submit" formaction="{% url 'to_do_app:add_todo' %}">+</button>
+                </div>
+                <div class="txt-container">
+                    <label for="add_new_title">Create todo</label>
+                    <input required
+                           type="text"
+                           class="txt-input"
+                           placeholder="Create a new todo..."
+                           id="add_new_title"
+                           name="new_todo_input"
+                    />
+                </div>
+            </div>
+        </form>
+        <ul class="todos all">
+            {% for todo_title in todo_titles %}
+                <li class="card">
+                    <form>
+                        {% csrf_token %}
+                        <div class="cb-container">
+                            <input class="cb-input" formaction="{% url 'to_do_app:check_todo' todo_title.id todo_title.status %}" formmethod="post" type="submit">
+                            <span class="check"></span>
+                        </div>
+                    </form>
+
+                    <p class="item">{{ todo_title }}</p>
+                    <form class="todo-edit-form invisible">
+                        {% csrf_token %}
+                        <div class="txt-container-edit">
+                            <label for="edit_title">Create todo</label>
+                            <input required
+                                   type="text"
+                                   class="txt-input-edit"
+                                   placeholder="Edit todo..."
+                                   id="edit_title"
+                                   name="edit_todo_input"
+                            />
+                        </div>
+                        <button class="todo-edit-save clear invisible" about="save" type="submit" formmethod="post" formaction="{% url 'to_do_app:edit_todo' todo_title.id %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#494c6b">
+                                <path d="M797.46-662.64v443.19q0 23.45-16.73 40.18t-40.14 16.73H219.41q-23.41 0-40.14-16.73t-16.73-40.14v-521.18q0-23.41 16.73-40.14t40.18-16.73h443.19l134.82 134.82Zm-32.43 13.86L648.78-765.03H219.59q-10.77 0-17.69 6.93-6.93 6.92-6.93 17.69v520.82q0 10.77 6.93 17.69 6.92 6.93 17.69 6.93h520.82q10.77 0 17.69-6.93 6.93-6.92 6.93-17.69v-429.19ZM479.84-302.23q30.22 0 51.83-21.46 21.61-21.45 21.61-51.67 0-30.21-21.45-51.82-21.46-21.61-51.67-21.61-30.22 0-51.83 21.45-21.61 21.46-21.61 51.67t21.45 51.83q21.46 21.61 51.67 21.61ZM270.08-576.8h293.56v-113.12H270.08v113.12Zm-75.11-71.98v453.81V-765.03v116.25Z"/>
+                            </svg>
+
+                        </button>
+                        <button class="todo-edit-cancel clear invisible" about="close">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 -960 960 960" width="36px" fill="#494c6b">
+                                <path d="m254.74-231.49-22.97-23.25L456.74-480 231.77-705.26l22.97-23.25L480-503.26l225.26-225.25 22.97 23.25L503.26-480l224.97 225.26-22.97 23.25L480-456.74 254.74-231.49Z"/>
+                            </svg>
+
+                        </button>
+
+                    </form>
+
+
+                    <button name="todo-edit-btn" class="todo-edit clear" about="edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#494c6b">
+                            <path d="M219.41-162.54q-23.41 0-40.14-16.73t-16.73-40.14v-521.18q0-23.41 16.73-40.14t40.32-16.73h349.18l-32.44 32.43H219.59q-9.23 0-16.92 7.7-7.7 7.69-7.7 16.92v520.82q0 9.23 7.7 16.92 7.69 7.7 16.92 7.7h520.82q9.23 0 16.92-7.7 7.7-7.69 7.7-16.92v-322.14l32.43-32.44v354.58q0 23.59-16.73 40.32t-40.14 16.73H219.41ZM480-480Zm-78.94 78.94v-103.27l362.73-363.44q4.61-4.23 10.5-6.37 5.89-2.13 12.75-2.13 6.03 0 11.9 2.02 5.86 2.02 11.07 6.39l53.35 52.76q5.7 5.11 8.42 11.91 2.72 6.8 2.72 13.62 0 6.81-2.34 12.95-2.34 6.13-7.25 10.75L500.49-401.06h-99.43Zm441.08-387.71-54-57.32 54 57.32ZM433.5-433.5h53.9l273.27-273.77-26.8-27.13-29.14-27.65L433.5-491.47v57.97Zm300.37-300.9-29.14-27.65 29.14 27.65 26.8 27.13-26.8-27.13Z"/>
+                        </svg>
+
+                    </button>
+
+
+                    <form class="todo-delete">
+                        {% csrf_token %}
+                        <button type="submit" formaction="{% url 'to_do_app:delete_todo' todo_title.id %}" formmethod="post" class="clear" about="delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#494c6b">
+                                <path d="M299.46-162.82q-23.33 0-40.19-16.86t-16.86-40.19v-508.51h-39.87v-32.2h154.13v-27.37h246.95v27.13h154.12v32.44h-39.87v508.69q0 23.41-16.73 40.14t-40.32 16.73H299.46Zm385.98-565.56H274.85v508.51q0 10.77 7.18 17.69 7.17 6.92 17.43 6.92h361.36q9.23 0 16.92-7.69 7.7-7.69 7.7-16.92v-508.51ZM395.82-277.14h32.44v-370.74h-32.44v370.74Zm136.21 0h32.43v-370.74h-32.43v370.74ZM274.85-728.38v533.12-533.12Z"/>
+                            </svg>
+
+                        </button>
+                    </form>
+
+                </li>
+            {% endfor %}
+
+
+        </ul>
+        <div class="card stat">
+            <p class="corner"><span id="items-left">{{ quantity }}</span> items left</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="filter">
+                    {#                    <button id="all" type="submit" formaction="{% url 'to_do_app:show_todo_all' %}" >All</button>#}
+                    <button id="active" type="submit" formaction="{% url 'to_do_app:show_todo_active' %}">Active</button>
+                    <button id="completed" type="submit" formaction="{% url 'to_do_app:show_todo_completed' %}">Completed</button>
+                </div>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <div class="corner">
+                    <button id="clear-completed" type="submit" formaction="{% url 'to_do_app:clear_completed_todos' %}">Clear Completed</button>
+                </div>
+            </form>
+
+        </div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            const todoItems = document.querySelectorAll("li.card");
+
+            todoItems.forEach((item) => {
+                const editBtn = item.querySelector(".todo-edit");
+                const saveBtn = item.querySelector(".todo-edit-save");
+                const cancelBtn = item.querySelector(".todo-edit-cancel");
+                const deleteBtn = item.querySelector(".todo-delete");
+                const editForm = item.querySelector(".todo-edit-form");
+                const editInput = editForm.querySelector(".txt-input-edit");
+                const todoText = item.querySelector(".item");
+                const cbContainer = item.querySelector('.cb-container')
+
+                editBtn.addEventListener("click", () => {
+                    // Переносим текущий текст в поле редактирования
+                    editInput.value = todoText.textContent;
+
+                    // Показываем форму редактирования и кнопки сохранить/отменить
+                    editForm.classList.remove("invisible");
+                    saveBtn.classList.remove("invisible");
+                    cancelBtn.classList.remove("invisible");
+                    cbContainer.classList.remove('cb-container')
+                    saveBtn.classList.remove('clear')
+                    cancelBtn.classList.remove('clear')
+                    // Скрываем кнопки редактировать и удалить
+                    editBtn.classList.add("invisible");
+                    deleteBtn.classList.add("invisible");
+                    todoText.classList.add("invisible")
+                    cbContainer.classList.add('invisible')
+
+                    // Добавляем стили для выделения формы
+                    editInput.classList.add("highlight");
+                    editInput.focus();
+                });
+
+                cancelBtn.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    // Скрываем форму редактирования и кнопки сохранить/отменить
+                    editForm.classList.add("invisible");
+                    saveBtn.classList.add("invisible");
+                    cancelBtn.classList.add("invisible");
+                    cbContainer.classList.add("cb-container")
+
+                    // Показываем кнопки редактировать и удалить
+                    cbContainer.classList.remove("invisible")
+                    todoText.classList.remove("invisible")
+                    editBtn.classList.remove("invisible");
+                    deleteBtn.classList.remove("invisible");
+
+                    // Убираем стили выделения формы
+                    editInput.classList.remove("highlight");
+                });
+            });
+        });
+
+
+    </script>
+{% endblock %}

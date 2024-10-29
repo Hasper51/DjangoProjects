@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Let's check this out.
+    I will be changing the tab title.-->
+    <link rel="stylesheet" href="{% static 'weather/styles.css' %}">
+    <title>Weather App</title>
+</head>
+<!--only added that style part to be able to see the stuff. I will fix
+it later in the video where it shows the CSS part.-->
+<body>
+
+
+<div class="weatherPart">
+    <div class="inputWeatherPart">
+        <form class="inputWeatherPartForm" action="{% url 'weather:index' %}" method="post">
+            {% csrf_token %}
+            <input class="input-input" type="text" name="location_input" placeholder="Еnter the city">
+            <button class="input-btn" type="submit">Search</button>
+        </form>
+    </div>
+    
+    <div class="innerWeatherPart" 
+        {% if image_url %}
+            style='background-image: url({{ image_url }});'
+        {% else %}
+            style='background-image: url({% static "weather/assets/boat.jpg" %});'
+        {% endif %}>
+
+        <div class="topWeatherPart">
+            <div class="date" id="theDate">
+                {{ datetime }}
+            </div>
+            <div class="location">
+                <img src="{% static 'weather/assets/outline-navigation-location.svg' %}" alt="Location Icon">
+                <span id="locationDestination">{{ location }}</span>
+            </div>
+
+        </div>
+        <div class="bottomWeatherPart">
+            <span class="temperature"><span id="highTemp">{{ temp }}</span> °C </span>
+            <span class="condition"><img src="https://openwethermap.org/img/w/{{ icon }}.png" width="50px" alt=""></span>
+            <span class="condition" id="condition">{{ description }}</span>
+            <div class="weatherFeelsPressure">
+                <div class="weatherFPWords spaceHere" style="margin-bottom: 10px;">
+                    <span><b>Feels Like</b></span>
+                    <span id="feels">{{ feels_like }}</span>
+                    <span><b>Pressure</b></span>
+                    <span id="pressureValue">{{ pressure }}</span>
+                </div>
+            </div>
+            <div class="weatherFPWords2 spaceHere" style="margin-bottom: 15px;">
+                <span><b>Humidity</b></span>
+                <span><span class="value " id="humidity">{{ humidity }}</span> %</span>
+                <span><b>Wind</b></span>
+                <span class="value " id="theWind">{{ wind }}</span>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+{#    <script src="{% static 'weather/index.js' %}"></script>#}
+</body>
+</html>
