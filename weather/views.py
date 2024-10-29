@@ -16,8 +16,8 @@ def index(request):
     open_weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={location}&appid=bcab89ad8807c1e58030b852f013ab28&units=metric'
     image_url = ''
     try:
-        SEARCH_API = 'AIzaSyCxguB09VxvppTsgaDMYUvnqbdWoYDRC2c'
-        SEACH_ENGINE_ID = '15760e206ff504534'
+        SEARCH_API = ''
+        SEACH_ENGINE_ID = ''
         query = location + ' 1920x1080'
         location_url = f'https://www.googleapis.com/customsearch/v1?key={SEARCH_API}&cx={SEACH_ENGINE_ID}&q={query}&searchType=image'
         data = requests.get(location_url).json()
